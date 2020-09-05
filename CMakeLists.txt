@@ -10,19 +10,23 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og -g")
 set(3RDPARTYDIR 3rdParty)
 find_package(Eigen3)
 
+# OpenGL
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
+
 # jellies
 file( GLOB SOURCES src/*.cpp )
 
-add_executable(jellies ${SOURCES} ${IMGUISOURCES})
+add_executable(jellies ${SOURCES})
 target_include_directories(jellies PUBLIC
   include/
   /usr/local/include/
   ${EIGEN3_INCLUDE_DIRS})
-target_link_libraries(jellies)
+target_link_libraries(jellies -lz /usr/local/Cellar/libpng/1.6.37/lib/libpng.a  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
 
 # OpenGL and context configuration
 # TODO: Convert to findOpenGL() command
-find_package(SDL2 REQUIRED)
+#find_package(SDL2 REQUIRED)
 
 #get_cmake_property(_variableNames VARIABLES)
 #list (SORT _variableNames)
@@ -30,4 +34,4 @@ find_package(SDL2 REQUIRED)
 #    message(STATUS "${_variableName}=${${_variableName}}")
 #endforeach()
 
-target_link_libraries(jellies PUBLIC ${SDL2_LIBRARIES})
+#target_link_libraries(jellies PUBLIC ${SDL2_LIBRARIES})
