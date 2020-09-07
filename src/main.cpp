@@ -16,9 +16,13 @@
 const int SCREEN_HEIGHT = 128;
 const int SCREEN_WIDTH  = 128;
 
-std::vector<jelly> jellies(20);
+std::vector<jelly> jellies(35);
 
 const int subsampling_factor = 2;
+
+const int GLOBAL_FPS = 60;
+const float GLOBAL_FRAME_TIME = 1.0f/float(GLOBAL_FPS);
+float GLOBAL_FRAME_TIMER = 0.0f;
 
 class JellyfishSimulation : public olc::PixelGameEngine{
 
@@ -34,10 +38,11 @@ class JellyfishSimulation : public olc::PixelGameEngine{
     // Called once at the start, so create things here
 
     // Load sprite and create decal
-    m_jelly_sprite = std::make_unique<olc::Sprite>("/Users/johnhoffman/Code/jellies/assets/jelly.png");
+    //m_jelly_sprite = std::make_unique<olc::Sprite>("/Users/johnhoffman/Code/jellies/assets/jelly_anim.png");
+    //m_jelly_sprite = std::make_unique<olc::Sprite>("/Users/johnhoffman/Code/jellies/assets/jelly.png");
+    m_jelly_sprite = std::make_unique<olc::Sprite>("/home/john/Code/jellies/assets/jelly_anim.png");
     m_jelly_decal  = std::make_unique<olc::Decal>(m_jelly_sprite.get());
 
-    
     // Render background
     std::vector<int> background_color_1 = {13,23,161};
     std::vector<int> background_color_2 = {12,184,255};
@@ -56,8 +61,7 @@ class JellyfishSimulation : public olc::PixelGameEngine{
 
   bool OnUserUpdate(float fElapsedTime) override
   {
-    // Called once per frame
-
+    
     // Update the simulation
     float dx = tank_size(0) / (float)SCREEN_WIDTH;
     float dy = tank_size(1) / (float)SCREEN_HEIGHT;
@@ -77,10 +81,21 @@ class JellyfishSimulation : public olc::PixelGameEngine{
       float scaling_factor = 0.5f;
       float scale = scaling_factor*(tank_size(2)-j.z())/tank_size(2)+(1.0f-scaling_factor);
       
-      DrawRotatedDecal(olc::vf2d(pix_x,pix_y),m_jelly_decal.get(),j.angle(),
-                       {float(m_jelly_sprite->width)/2.0f,float(m_jelly_sprite->height)/2.0f},
-                       {scale,scale},
-                       olc::Pixel(scale*255,scale*255,scale*255));
+      //DrawRotatedDecal(olc::vf2d(pix_x,pix_y),m_jelly_decal.get(),j.angle(),
+      //                 {float(m_jelly_sprite->width)/2.0f,float(m_jelly_sprite->height)/2.0f},
+      //                 {scale,scale},
+      //                 olc::Pixel(scale*255,scale*255,scale*255));
+
+      //std::cout << j.currentFrame() << std::endl;
+      //DrawPartialDecal(olc::vf2d(pix_x,pix_y),m_jelly_decal.get(),{j.currentFrame()*32.0f,0.0f},{32.0f,32.0f});
+      
+      DrawPartialRotatedDecal(olc::vf2d(pix_x,pix_y),m_jelly_decal.get(),j.angle(),
+                              {float(32.0f)/2.0f,float(32.0f)/2.0f},
+                              {j.currentFrame()*32,0},
+                              {32,32},
+                              {scale,scale},
+                              olc::Pixel(scale*255,scale*255,scale*255));
+      
     }
 
     return true;
@@ -94,7 +109,7 @@ private:
 int main(int argc, char** argv){
 
   JellyfishSimulation demo;
-  if (demo.Construct(SCREEN_WIDTH,SCREEN_HEIGHT, 5, 5))
+  if (demo.Construct(SCREEN_WIDTH,SCREEN_HEIGHT, 5, 5, false, true))
     demo.Start();
 
   return 0;  
