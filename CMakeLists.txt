@@ -13,6 +13,7 @@ find_package(Eigen3)
 # OpenGL
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
+find_package(PNG REQUIRED)
 
 # jellies
 file( GLOB SOURCES src/*.cpp )
@@ -28,17 +29,5 @@ if (${APPLE})
 endif()
 
 if (${UNIX})
-  target_link_libraries(jellies -lz -lpng -lX11 -lstdc++fs  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
+  target_link_libraries(jellies   -lX11 -lstdc++fs  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARIES})
 endif()
-
-# OpenGL and context configuration
-# TODO: Convert to findOpenGL() command
-#find_package(SDL2 REQUIRED)
-
-#get_cmake_property(_variableNames VARIABLES)
-#list (SORT _variableNames)
-#foreach (_variableName ${_variableNames})
-#    message(STATUS "${_variableName}=${${_variableName}}")
-#endforeach()
-
-#target_link_libraries(jellies PUBLIC ${SDL2_LIBRARIES})

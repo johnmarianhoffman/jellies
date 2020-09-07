@@ -16,7 +16,7 @@
 const int SCREEN_HEIGHT = 128;
 const int SCREEN_WIDTH  = 128;
 
-std::vector<jelly> jellies(50);
+std::vector<jelly> jellies(35);
 
 const int subsampling_factor = 2;
 
@@ -38,7 +38,9 @@ class JellyfishSimulation : public olc::PixelGameEngine{
     // Called once at the start, so create things here
 
     // Load sprite and create decal
-    m_jelly_sprite = std::make_unique<olc::Sprite>("/Users/johnhoffman/Code/jellies/assets/jelly_anim.png");
+    //m_jelly_sprite = std::make_unique<olc::Sprite>("/Users/johnhoffman/Code/jellies/assets/jelly_anim.png");
+    //m_jelly_sprite = std::make_unique<olc::Sprite>("/Users/johnhoffman/Code/jellies/assets/jelly.png");
+    m_jelly_sprite = std::make_unique<olc::Sprite>("/home/john/Code/jellies/assets/jelly_anim.png");
     m_jelly_decal  = std::make_unique<olc::Decal>(m_jelly_sprite.get());
 
     // Render background
