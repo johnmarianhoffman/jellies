@@ -109,7 +109,7 @@ private:
 int main(int argc, char** argv){
 
   JellyfishSimulation demo;
-  if (demo.Construct(SCREEN_WIDTH,SCREEN_HEIGHT, 5, 5))
+  if (demo.Construct(SCREEN_WIDTH,SCREEN_HEIGHT, 5, 5, false, true))
     demo.Start();
 
   return 0;  
