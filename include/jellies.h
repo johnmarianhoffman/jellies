@@ -17,44 +17,45 @@ public:
       velocity[i] = 0.01f * (1.0f - 2.0f * (float)rand()/(float)RAND_MAX);
     }
 
-    orientation = Eigen::Vector3f::Random();
-    orientation = (1.0f/orientation.norm())*orientation;
-
+    orientation = Eigen::Vector3f::Random().normalized();
   }
   ~jelly(){}
 
-  void update(){
+  void update(float fElapsedTime){
 
     // Apply h2o friction
-    velocity -= 0.03f*velocity;
-
+    velocity -= (0.15f*velocity.dot(velocity)) * fElapsedTime * velocity.normalized();
+    
     // Apply velocity field (offset to match vector field equations)
-    Eigen::Vector3f tmp_pos = position + -2.5*Eigen::Vector3f::Ones();
+    Eigen::Vector3f tmp_pos = position + (-tank_size(0)/2.0f)*Eigen::Vector3f::Ones();
     Eigen::Vector3f tmp_vel;
     tmp_vel(0) = sin(tmp_pos(0))*tmp_pos(1);
-    tmp_vel(1) = (-abs(tmp_pos(0)) + tank_size(0)/4);
+    tmp_vel(1) = -abs(tmp_pos(0)) + tank_size(0)/4;
     tmp_vel(2) = 0;
-    velocity += 0.0003f*tmp_vel;
+    velocity += (0.00015f*tmp_vel) * fElapsedTime;
 
     // Attempt to align with the velocity field
-    float correction_magnitude = orientation.dot(tmp_vel);
-    Eigen::Vector3f orientation_offset = Eigen::Vector3f::Random();
-    orientation_offset *= (1.0f/orientation_offset.norm());
-    int count = 0;
-    while ((orientation + orientation_offset).dot(tmp_vel) > correction_magnitude && count < 100){
-      orientation_offset = Eigen::Vector3f::Random();
-      orientation_offset *= (1.0f/orientation_offset.norm());
-    }
 
-    if (count<100)
-      orientation += orientation_offset;
+    //float correction_magnitude = orientation.dot(tmp_vel);
+    //Eigen::Vector3f orientation_offset = Eigen::Vector3f::Random();
+    //orientation_offset *= (1.0f/orientation_offset.norm());
+    //int count = 0;
+    //while ((orientation + orientation_offset).dot(tmp_vel) > correction_magnitude && count < 100){
+    //  orientation_offset = Eigen::Vector3f::Random();
+    //  orientation_offset *= (1.0f/orientation_offset.norm());
+    //}
+    //
+    //if (count<100){
+    //  orientation += orientation_offset*fElapsedTime;
+    //  orientation *= 1.0f/orientation.norm();
+    //}
 
-    // Need to change this to pulse more rhythmically, rather than based on velocit
+    orientation = tmp_vel.normalized();
+    
     // Seems like jellyfish pulse every 3 seconds
     if (rand()%75==0){
-      Eigen::Vector3f bump = 0.00005*orientation;
+      Eigen::Vector3f bump = 0.005*orientation;
       velocity += bump;
-      std::cout << "bump: " << velocity.transpose() << " " << bump.transpose() << std::endl;
     }
     
     //if (velocity.norm() < 0.001){
@@ -62,12 +63,14 @@ public:
     //  velocity += bump;
     //}
       
-    position+=velocity;
+    position+=velocity * fElapsedTime;
 
     for (int i=0;i<3;i++){
-    if (position(i) > tank_size(i) ||
-        position(i) < 0)
-      velocity(i) = - velocity(i);
+      if (position(i) > tank_size(i) ||
+          position(i) < 0){
+        velocity(i) = - velocity(i);
+        //position-=velocity * fElapsedTime;
+      }
     }
   }
 
@@ -86,12 +89,27 @@ public:
   float z(){
     return position(2);
   }
+
+  float angle(){
+    // Hacky, but the only way it actuall works with OLC PGE
+    Eigen::Vector2f o = Eigen::Vector2f(orientation(0),orientation(1)).normalized();
+    Eigen::Vector2f ref = Eigen::Vector2f(0.0f,1.0f);
+    float a = acos(o.dot(ref));
+    if (o(0) < 0)
+      return a;
+    else    
+      return -a;
+  }
   
 private:
   Eigen::Vector3f position;
   Eigen::Vector3f velocity;
   Eigen::Vector3f orientation; // Direction of jellyfish propulsion vector.  I.e. when jellyfish pulses, adds velocity in this direction.
   float radius = 0.5f;
+
+  float animation_timer = 0.0;
+  float current_frame = rand()%16;
   
-  int offset = 1000*(float)rand()/(float)RAND_MAX;
+  //int offset = 1000*(float)rand()/(float)RAND_MAX;
+  int offset = rand()%1000;
 };
