@@ -75,7 +75,6 @@ class JellyfishSimulation : public olc::PixelGameEngine{
       float scaling_factor = 0.5f;
       float scale = scaling_factor*(tank_size(2)-j.z())/tank_size(2)+(1.0f-scaling_factor);
       
-      
       DrawRotatedDecal(olc::vf2d(pix_x,pix_y),m_jelly_decal.get(),j.angle(),
                        {float(m_jelly_sprite->width)/2.0f,float(m_jelly_sprite->height)/2.0f},
                        {scale,scale},

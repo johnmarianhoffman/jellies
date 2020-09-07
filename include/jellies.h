@@ -91,7 +91,7 @@ public:
   }
 
   float angle(){
-
+    // Hacky, but the only way it actuall works with OLC PGE
     Eigen::Vector2f o = Eigen::Vector2f(orientation(0),orientation(1)).normalized();
     Eigen::Vector2f ref = Eigen::Vector2f(0.0f,1.0f);
     float a = acos(o.dot(ref));
@@ -106,6 +106,10 @@ private:
   Eigen::Vector3f velocity;
   Eigen::Vector3f orientation; // Direction of jellyfish propulsion vector.  I.e. when jellyfish pulses, adds velocity in this direction.
   float radius = 0.5f;
+
+  float animation_timer = 0.0;
+  float current_frame = rand()%16;
   
-  int offset = 1000*(float)rand()/(float)RAND_MAX;
+  //int offset = 1000*(float)rand()/(float)RAND_MAX;
+  int offset = rand()%1000;
 };
