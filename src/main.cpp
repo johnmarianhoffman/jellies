@@ -7,9 +7,11 @@
 #include <ctime>
 #include <memory>
 
+#include <jellies.h>
+
 #define OLC_PGE_APPLICATION
 #include <olcPixelGameEngine.h>
-#include <jellies.h>
+
 
 const int SCREEN_HEIGHT = 128;
 const int SCREEN_WIDTH  = 128;

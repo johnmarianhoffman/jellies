@@ -22,7 +22,14 @@ target_include_directories(jellies PUBLIC
   include/
   /usr/local/include/
   ${EIGEN3_INCLUDE_DIRS})
-target_link_libraries(jellies -lz /usr/local/Cellar/libpng/1.6.37/lib/libpng.a  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
+
+if (${APPLE})
+  target_link_libraries(jellies -lz /usr/local/Cellar/libpng/1.6.37/lib/libpng.a  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
+endif()
+
+if (${UNIX})
+  target_link_libraries(jellies -lz -lpng -lX11 -lstdc++fs  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
+endif()
 
 # OpenGL and context configuration
 # TODO: Convert to findOpenGL() command
