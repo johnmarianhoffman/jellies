@@ -8,6 +8,9 @@ const uint32_t background_color = 0x000000FF;
 const uint32_t background_color_bottom = 0x001323a1;
 const uint32_t background_color_top    = 0x0012b8ff;
 
+const float animation_fps = 10;
+const float frame_time = 1.0f/float(animation_fps);//ms
+
 class jelly{
 public:
   jelly(){
@@ -32,31 +35,30 @@ public:
     tmp_vel(0) = sin(tmp_pos(0))*tmp_pos(1);
     tmp_vel(1) = -abs(tmp_pos(0)) + tank_size(0)/4;
     tmp_vel(2) = 0;
-    velocity += (0.00015f*tmp_vel) * fElapsedTime;
+    velocity += (.05f*tmp_vel.normalized()) * fElapsedTime;
 
     // Attempt to align with the velocity field
+    float correction_magnitude = orientation.dot(tmp_vel);
+    Eigen::Vector3f orientation_offset = Eigen::Vector3f::Random();
+    orientation_offset *= (1.0f/orientation_offset.norm());
+    int count = 0;
+    while ((orientation + orientation_offset).dot(tmp_vel) > correction_magnitude && count < 100){
+      orientation_offset = Eigen::Vector3f::Random();
+      orientation_offset *= (1.0f/orientation_offset.norm());
+    }
+    
+    if (count<100){
+      orientation += orientation_offset*fElapsedTime;
+      orientation *= 1.0f/orientation.norm();
+    }
 
-    //float correction_magnitude = orientation.dot(tmp_vel);
-    //Eigen::Vector3f orientation_offset = Eigen::Vector3f::Random();
-    //orientation_offset *= (1.0f/orientation_offset.norm());
-    //int count = 0;
-    //while ((orientation + orientation_offset).dot(tmp_vel) > correction_magnitude && count < 100){
-    //  orientation_offset = Eigen::Vector3f::Random();
-    //  orientation_offset *= (1.0f/orientation_offset.norm());
-    //}
-    //
-    //if (count<100){
-    //  orientation += orientation_offset*fElapsedTime;
-    //  orientation *= 1.0f/orientation.norm();
-    //}
-
-    orientation = tmp_vel.normalized();
+    //orientation = tmp_vel.normalized();
     
     // Seems like jellyfish pulse every 3 seconds
-    if (rand()%75==0){
-      Eigen::Vector3f bump = 0.005*orientation;
-      velocity += bump;
-    }
+    //if (rand()%75==0){
+    //  Eigen::Vector3f bump = 0.005*orientation;
+    //  velocity += bump;
+    //}
     
     //if (velocity.norm() < 0.001){
     //  Eigen::Vector3f bump = 0.01f*orientation;
@@ -72,6 +74,15 @@ public:
         //position-=velocity * fElapsedTime;
       }
     }
+
+    // Update the animation frame
+    animation_timer += fElapsedTime;
+    if (animation_timer > frame_time){
+      current_frame = (current_frame+1)%16;
+      animation_timer = 0.0f;
+    }
+    
+    
   }
 
   float size(){
@@ -88,6 +99,10 @@ public:
   
   float z(){
     return position(2);
+  }
+
+  float currentFrame(){
+    return current_frame;
   }
 
   float angle(){
@@ -107,8 +122,8 @@ private:
   Eigen::Vector3f orientation; // Direction of jellyfish propulsion vector.  I.e. when jellyfish pulses, adds velocity in this direction.
   float radius = 0.5f;
 
-  float animation_timer = 0.0;
-  float current_frame = rand()%16;
+  float animation_timer = frame_time * float(rand())/float(RAND_MAX);
+  int current_frame = rand()%16;
   
   //int offset = 1000*(float)rand()/(float)RAND_MAX;
   int offset = rand()%1000;
