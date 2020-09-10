@@ -5,8 +5,11 @@ const uint32_t jelly_color = 0x00fca123;
 
 const uint32_t background_color = 0x000000FF;
 
-const uint32_t background_color_bottom = 0x001323a1;
-const uint32_t background_color_top    = 0x0012b8ff;
+//const uint32_t background_color_bottom = 0x001323a1;
+//const uint32_t background_color_top    = 0x0012b8ff;
+
+const uint32_t background_color_bottom = 0x000f27b7;
+const uint32_t background_color_top    = 0x000aadfff;
 
 const float animation_fps = 10;
 const float frame_time = 1.0f/float(animation_fps);//ms
@@ -103,6 +106,10 @@ public:
 
   float currentFrame(){
     return current_frame;
+  }
+
+  Eigen::Vector3f getPosition(){
+    return position;
   }
 
   float angle(){
