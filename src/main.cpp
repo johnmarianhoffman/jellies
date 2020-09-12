@@ -2,12 +2,14 @@
 #include <vector>
 #include <random>
 #include <cstring>
+#include <cstdio>
 #include <chrono>
 #include <thread>
 #include <ctime>
 #include <memory>
-
+#include <fstream>
 #include <Eigen/Dense>
+#include <base64.h>
 
 const int SCREEN_HEIGHT = 128;
 const int SCREEN_WIDTH  = 128;
@@ -34,9 +36,18 @@ class JellyfishSimulation : public olc::PixelGameEngine{
   bool OnUserCreate() override
   {
 
+    // Decode and save jellyfish sprite sheet to temporary file
+    std::string raw_bytes = base64_decode(jellyfish_anim_base64);
+    std::ofstream tmp_fid("tmp.png",std::ios::binary);
+    tmp_fid.write((char*)raw_bytes.c_str(),raw_bytes.length());
+    tmp_fid.close();
+    
     // Load sprite and create decal
-    m_jelly_sprite = std::make_unique<olc::Sprite>("/Users/johnhoffman/Code/jellies/assets/jelly_anim.png");
+    //m_jelly_sprite = std::make_unique<olc::Sprite>("/Users/johnhoffman/Code/jellies/assets/jelly_anim.png");
+    m_jelly_sprite = std::make_unique<olc::Sprite>("tmp.png");
     m_jelly_decal  = std::make_unique<olc::Decal>(m_jelly_sprite.get());
+
+    remove("tmp.png");
 
     // Render background
     std::vector<int> background_color_1 = {15,39,183};
