@@ -28,6 +28,6 @@ if (${APPLE})
   target_link_libraries(jellies -lz /usr/local/Cellar/libpng/1.6.37/lib/libpng.a  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
 endif()
 
-if (${UNIX})
+if (${UNIX} AND (NOT ${APPLE}))
   target_link_libraries(jellies   -lX11 -lstdc++fs  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARIES})
 endif()

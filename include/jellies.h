@@ -1,19 +1,3 @@
-#include <Eigen/Dense>
-
-const Eigen::Vector3f tank_size(5.0f,5.0f,1.0f);
-const uint32_t jelly_color = 0x00fca123;
-
-const uint32_t background_color = 0x000000FF;
-
-//const uint32_t background_color_bottom = 0x001323a1;
-//const uint32_t background_color_top    = 0x0012b8ff;
-
-const uint32_t background_color_bottom = 0x000f27b7;
-const uint32_t background_color_top    = 0x000aadfff;
-
-const float animation_fps = 10;
-const float frame_time = 1.0f/float(animation_fps);//ms
-
 class jelly{
 public:
   jelly(){
@@ -28,7 +12,6 @@ public:
   ~jelly(){}
 
   void update(float fElapsedTime){
-
     // Apply h2o friction
     velocity -= (0.15f*velocity.dot(velocity)) * fElapsedTime * velocity.normalized();
     
@@ -55,19 +38,6 @@ public:
       orientation *= 1.0f/orientation.norm();
     }
 
-    //orientation = tmp_vel.normalized();
-    
-    // Seems like jellyfish pulse every 3 seconds
-    //if (rand()%75==0){
-    //  Eigen::Vector3f bump = 0.005*orientation;
-    //  velocity += bump;
-    //}
-    
-    //if (velocity.norm() < 0.001){
-    //  Eigen::Vector3f bump = 0.01f*orientation;
-    //  velocity += bump;
-    //}
-      
     position+=velocity * fElapsedTime;
 
     for (int i=0;i<3;i++){
@@ -83,37 +53,18 @@ public:
     if (animation_timer > frame_time){
       current_frame = (current_frame+1)%16;
       animation_timer = 0.0f;
-    }
-    
-    
+    }    
   }
 
-  float size(){
-    return radius;
-  }
-
-  float x(){
-    return position(0);
-  }
-  
-  float y(){
-    return position(1);
-  }
-  
-  float z(){
-    return position(2);
-  }
-
-  float currentFrame(){
-    return current_frame;
-  }
-
-  Eigen::Vector3f getPosition(){
-    return position;
-  }
+  float size(){return radius;}
+  float x(){return position(0);}
+  float y(){return position(1);}
+  float z(){return position(2);}
+  float currentFrame(){return current_frame;}
+  Eigen::Vector3f getPosition(){return position;}
 
   float angle(){
-    // Hacky, but the only way it actuall works with OLC PGE
+    // Hacky, but the only way it actually works with OLC PGE
     Eigen::Vector2f o = Eigen::Vector2f(orientation(0),orientation(1)).normalized();
     Eigen::Vector2f ref = Eigen::Vector2f(0.0f,1.0f);
     float a = acos(o.dot(ref));
@@ -132,6 +83,5 @@ private:
   float animation_timer = frame_time * float(rand())/float(RAND_MAX);
   int current_frame = rand()%16;
   
-  //int offset = 1000*(float)rand()/(float)RAND_MAX;
   int offset = rand()%1000;
 };
