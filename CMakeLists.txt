@@ -24,10 +24,11 @@ target_include_directories(jellies PUBLIC
   /usr/local/include/
   ${EIGEN3_INCLUDE_DIRS})
 
-if (${APPLE})
+if (APPLE)
   target_link_libraries(jellies -lz /usr/local/Cellar/libpng/1.6.37/lib/libpng.a  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
 endif()
 
-if (${UNIX} AND (NOT ${APPLE}))
+if (UNIX AND (NOT APPLE))
+  message("LINUX DETECTED")
   target_link_libraries(jellies   -lX11 -lstdc++fs  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARIES})
 endif()
