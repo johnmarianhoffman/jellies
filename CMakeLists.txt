@@ -12,8 +12,15 @@ find_package(Eigen3)
 
 # OpenGL
 find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
+#find_package(GLUT REQUIRED)
 find_package(PNG REQUIRED)
+
+# Mac Specific
+if (${APPLE})
+  find_library(COCOA_LIBRARY Cocoa)
+  find_library(IOKIT_LIBRARY IOKit)
+  find_library(COREFOUNDATION_LIBRARY CoreFoundation)
+endif()
 
 # jellies
 file( GLOB SOURCES src/*.cpp )
@@ -25,9 +32,11 @@ target_include_directories(jellies PUBLIC
   ${EIGEN3_INCLUDE_DIRS})
 
 if (${APPLE})
-  target_link_libraries(jellies -lz /usr/local/Cellar/libpng/1.6.37/lib/libpng.a  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
+  #target_link_libraries(jellies -lz /usr/local/Cellar/libpng/1.6.37/lib/libpng.a  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
+  #target_link_libraries(jellies -lz /usr/local/Cellar/libpng/1.6.37/lib/libpng.a  ${OPENGL_LIBRARIES} /usr/local/lib/libglfw3.a "-framework Cocoa -framework IOKit -framework CoreFoundation")
+  target_link_libraries(jellies -lz /usr/local/Cellar/libpng/1.6.37/lib/libpng.a  ${OPENGL_LIBRARIES} /usr/local/lib/libglfw3.a ${COCOA_LIBRARY} ${IOKIT_LIBRARY} ${COREFOUNDATION_LIBRARY})
 endif()
 
 if (${UNIX} AND (NOT ${APPLE}))
-  target_link_libraries(jellies   -lX11 -lstdc++fs  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARIES})
+  target_link_libraries(jellies   -lX11 -lstdc++fs  ${OPENGL_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARIES})
 endif()

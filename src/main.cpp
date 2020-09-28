@@ -19,6 +19,7 @@ const float frame_time = 1.0f/float(animation_fps);//ms
 
 #include <jellies.h>
 
+#define __GLFW__
 #define OLC_PGE_APPLICATION
 #include <olcPixelGameEngine.h>
 
