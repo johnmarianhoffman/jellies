@@ -30,5 +30,5 @@ endif()
 
 if (UNIX AND (NOT APPLE))
   message("LINUX DETECTED")
-  target_link_libraries(jellies   -lX11 -lstdc++fs  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARIES})
+  target_link_libraries(jellies   -lX11 -lstdc++fs  ${OPENGL_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} -lglfw)
 endif()
